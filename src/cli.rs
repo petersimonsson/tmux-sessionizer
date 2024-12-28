@@ -136,6 +136,9 @@ pub struct ConfigArgs {
     /// When set to `Foreground`, the new session will only be opened in the background if the active
     /// tmux session has changed since starting the clone process (for long clone processes on larger repos)
     clone_repo_switch: Option<CloneRepoSwitchConfig>,
+    #[arg(short, long, value_name = "true | false")]
+    /// Include worktrees in the selection
+    include_worktrees: Option<bool>,
 }
 
 #[derive(Debug, Args)]
@@ -477,6 +480,10 @@ fn config_command(cmd: &ConfigCommand, mut config: Config) -> Result<()> {
 
     if let Some(switch) = &args.clone_repo_switch {
         config.clone_repo_switch = Some(switch.to_owned());
+    }
+
+    if let Some(include) = args.include_worktrees {
+        config.include_worktrees = Some(include);
     }
 
     config.save().change_context(TmsError::ConfigError)?;

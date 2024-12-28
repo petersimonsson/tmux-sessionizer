@@ -17,6 +17,7 @@ pub fn find_repos(config: &Config) -> Result<HashMap<String, Vec<Session>>> {
     let directories = config.search_dirs().change_context(TmsError::ConfigError)?;
     let mut repos: HashMap<String, Vec<Session>> = HashMap::new();
     let mut to_search: VecDeque<SearchDirectory> = directories.into();
+    let include_worktrees = config.include_worktrees.unwrap_or(false);
 
     let excluder = if let Some(excluded_dirs) = &config.excluded_dirs {
         Some(
@@ -37,7 +38,7 @@ pub fn find_repos(config: &Config) -> Result<HashMap<String, Vec<Session>>> {
         }
 
         if let Ok(repo) = git2::Repository::open(&file.path) {
-            if repo.is_worktree() {
+            if repo.is_worktree() && !include_worktrees {
                 continue;
             }
 
