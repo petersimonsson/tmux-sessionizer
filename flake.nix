@@ -55,6 +55,9 @@
             nativeBuildInputs = [
               installShellFiles
             ];
+            nativeCheckInputs = [
+              git
+            ];
           };
           cargoArtifacts = craneLib.buildDepsOnly commonArgs;
           tmux-sessionizer = craneLib.buildPackage (
